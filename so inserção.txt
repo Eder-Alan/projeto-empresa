@@ -1,4 +1,5 @@
- 
+--drop database bd_empresa;
+
 create database if not exists bd_empresa 
 DEFAULT CHARACTER SET utf8mb4
 DEFAULT COLLATE utf8mb4_unicode_ci;
@@ -1490,5 +1491,3 @@ select * from departamento;
 select * from cargo;
 select * from estadocivil;
 select * from beneficio;
-
-/*comece a fazer algumas consultas para verificar se tudo está correto.*/
