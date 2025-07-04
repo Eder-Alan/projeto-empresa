@@ -1,0 +1,74 @@
+/*Você sabia que no MySQL também existe um “Ctrl + Z”?
+Pois é!                                                                                                                                                            Durante meus estudos aqui em transição de carreira para a área de Dados, me deparei com uma dúvida simples, mas que pode salvar muita gente no dia a dia:
+"E se eu fizer uma atualização errada no banco de dados? Tem como desfazer?"
+A resposta é: sim, com o comando ROLLBACK!
+Como gosto de aprender testando, fiz um experimento no meu projeto pessoal — um sistema de RH usando MySQL por linha de comando.
+*/
+
+-- 1. Verificar se o autocommit está ativo:
+SELECT @@autocommit;
+
+
+-- No caso de 1 significa que ele está ativo, para desativar é simples:
+-- 2. Desative o autocommit (opcional, mas recomendado):
+SET autocommit = 0;
+
+
+-- 3. Inicie a transação:
+START TRANSACTION;
+
+
+-- 4. Faremos uma consulta de qual registro sofrerá uma alteração.
+SELECT nome, cpf, data_nascimento
+FROM colaborador
+WHERE idcolaborador = 1;
+
+
+-- Iremos fazer várias alterações e ver se depois que eu der um rollback tudo voltará ao estágio inicial, ou se somente a ultima alteração é que volta ao estado anterior.
+-- 5. Primeira alteração.
+Update colaborador
+Set nome = 'Maria Moore'
+Where idcolaborador = 1;
+
+
+-- 6. Verificando: 
+SELECT nome, cpf, data_nascimento
+FROM colaborador
+WHERE idcolaborador = 1;
+
+
+-- Iremos alterar agora o cpf
+UPDATE colaborador
+SET cpf = '222-99-4967'
+WHERE idcolaborador = 1;
+
+
+-- Alterar data de nascimento.
+UPDATE colaborador
+SET data_nascimento = '1999-06-07'
+WHERE idcolaborador = 1;
+
+
+-- Iremos conferir agora todas as alterações feitas: 
+SELECT nome, cpf, data_nascimento
+FROM colaborador
+WHERE idcolaborador = 1;
+
+
+-- Suponhamos que todas as alterações forma realizadas no colaborador errado e agora?
+-- Pois bem agora que acontece a mágica!!
+-- Para isso basta dar um rollback e verificar se tudo voltará ao estado inicial.
+rollback;
+
+
+-- Basta conferir e verificar se realmente tudo voltou ao estado original:
+SELECT nome, cpf, data_nascimento
+FROM colaborador
+WHERE idcolaborador = 1;
+
+
+-- Como pode ser observado tudo voltou ao estado inicial.
+-- A mágica só funciona se o autocommit estiver desativado, e você estiver dentro de uma transação com START TRANSACTION.
+-- E se tudo estive correto o que deveria ser feito? Simples ao invés do rollback bastaria digitar o seguinte comando: 
+commit;
+-- E pronto!! Todas as alterações estariam feitas efetivamente!.
